@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useQueryClient } from 'vue-query'
 // const client = useClient()
 // const headers = useClientHeaders()
 // const addHeader = () => {
@@ -8,34 +9,48 @@
 
 const { data: todos, isLoading, error, refetch } = useQuery(['getTodos'], { ssr: true })
 
-// const { data: examples, pending: pendingE, error: errorE, refresh: refreshE } = await useAsyncQuery(['getExamples'])
-// const addTodo = async () => {
-//   const title = Math.random().toString(36).slice(2, 7)
-//   try {
-//     const result = await client.mutation('addTodo', {
-//       id: Date.now(),
-//       userId: 69,
-//       title,
-//       completed: false,
-//     })
-//     // console.log('Todo: ', result)
-//   }
-//   catch (e) {
-//     // console.log(e)
-//   }
-// }
+const { data: examples } = useQuery(['getExamples'])
 
-// async function addExample() {
-//   const name = 'Example1'
-//   try {
-//     const result = await client.mutation('addExample', { name })
-//     refreshE()
-//     console.log('[LOG] ~ file: index.vue ~ line 31 ~ result', result)
-//   }
-//   catch (error) {
-//     console.log('[LOG] ~ file: index.vue ~ line 34 ~ error', error)
-//   }
-// }
+const client = useQueryClient()
+
+const todoMutation = useMutation(['addTodo'], {
+  onSettled: () => {
+    client.invalidateQueries('getTodos')
+  },
+})
+
+const exampleMutation = useMutation(['addExample'], {
+  onSettled: () => {
+    client.invalidateQueries('getExamples')
+  },
+})
+
+const addTodo = async () => {
+  const title = Math.random().toString(36).slice(2, 7)
+  try {
+    const result = await todoMutation.mutateAsync({
+      id: Date.now(),
+      userId: 69,
+      title,
+      completed: false,
+    })
+    // console.log('Todo: ', result)
+  }
+  catch (e) {
+    // console.log(e)
+  }
+}
+
+async function addExample() {
+  const name = 'Example1'
+  try {
+    const result = await exampleMutation.mutateAsync({ name })
+    console.log('[LOG] ~ file: index.vue ~ line 31 ~ result', result)
+  }
+  catch (error) {
+    console.log('[LOG] ~ file: index.vue ~ line 34 ~ error', error)
+  }
+}
 </script>
 
 <template>
@@ -60,27 +75,27 @@ const { data: todos, isLoading, error, refetch } = useQuery(['getTodos'], { ssr:
   </div>
   <div v-else-if="todos">
     <ul>
-      <li v-for="t in todos.slice(0, 10)" :key="t.id">
+      <li v-for="t in todos" :key="t.id">
         <NuxtLink :class="{ completed: t.completed }" :to="`/todo/${t.id}`">
           Title: {{ t.title }}
         </NuxtLink>
       </li>
     </ul>
-    <!-- <div>
-      <div v-for="e in examples.slice(0, 10)" :key="e.id">
+    <div v-if="examples">
+      <div v-for="e in examples" :key="e.id">
         <span>{{ e.name }}</span>
       </div>
-    </div> -->
-    <!-- <button class="btn" @click="addTodo">
-      Add Todo
-    </button>
+    </div>
     <button class="btn" @click="addExample">
       Add Example
     </button>
-    <button class="btn" @click="() => refresh()">
+    <button class="btn" @click="addTodo">
+      Add Todo
+    </button>
+    <button class="btn" @click="() => refetch()">
       Refresh
     </button>
-    <button class="btn" @click="addHeader">
+    <!-- <button class="btn" @click="addHeader">
       Add header
     </button> -->
   </div>

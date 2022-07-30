@@ -1,8 +1,11 @@
 import type { TRPCClient, TRPCClientErrorLike, TRPCRequestOptions } from '@trpc/client'
 import type { ProcedureRecord, inferHandlerInput, inferProcedureInput, inferProcedureOutput } from '@trpc/server'
 import type { Ref } from 'vue'
-import type { UseQueryOptions } from 'vue-query'
-import { useQuery as __useQuery } from 'vue-query'
+import type { UseMutationOptions, UseQueryOptions } from 'vue-query'
+import {
+  useMutation as __useMutation,
+  useQuery as __useQuery,
+} from 'vue-query'
 import type { router } from '~/server/trpc'
 
 type MaybeRef<T> = T | Ref<T>
@@ -25,7 +28,10 @@ export function useClient(): TRPCClient<TRouter> {
 }
 
 type TQueries = TRouter['_def']['queries']
+
 type TQueryValues = inferProcedures<TRouter['_def']['queries']>
+type TMutationValues = inferProcedures<TRouter['_def']['mutations']>
+
 type TError = TRPCClientErrorLike<TRouter>
 
 export function useQuery<
@@ -52,4 +58,20 @@ export function useQuery<
     })
   }
   return query
+}
+
+export function useMutation<
+    TPath extends keyof TMutationValues & string,
+    TContext = unknown,
+  >(
+  path: TPath | [TPath],
+  opts?: Omit<UseMutationOptions<TMutationValues[TPath]['output'], TError, TMutationValues[TPath]['input'], TContext>, 'mutationFn'>,
+  trpcOptions?: TRPCRequestOptions,
+) {
+  const { $client } = useNuxtApp()
+
+  return __useMutation((input) => {
+    const actualPath = Array.isArray(path) ? path[0] : path
+    return $client.mutation(actualPath, input, trpcOptions)
+  }, opts)
 }
