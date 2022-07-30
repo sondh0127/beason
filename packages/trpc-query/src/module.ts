@@ -47,7 +47,6 @@ export default defineNuxtModule<ModuleOptions>({
     // add server handler endpoint for trpc
     // const handlerPath = join(nuxt.options.buildDir, 'trpc-handler.ts')
     const handlerPath = join(runtimeDir, 'trpc-handler.ts')
-    console.log('[LOG] ~ file: module.ts ~ line 42 ~ handlerPath', handlerPath)
 
     const trpcOptionsPath = join(nuxt.options.srcDir, 'server/trpc')
 
