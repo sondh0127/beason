@@ -1,56 +1,9 @@
-import * as trpc from '@trpc/server'
 import type { inferAsyncReturnType } from '@trpc/server'
-import { z } from 'zod'
 import type { CompatibilityEvent } from 'h3'
 import { prisma } from '../db/client'
+import { appRouter } from './routers'
 
-const baseURL = 'https://jsonplaceholder.typicode.com'
-
-const TodoShape = z.object({
-  userId: z.number(),
-  id: z.number(),
-  title: z.string(),
-  completed: z.boolean(),
-})
-
-export type Todo = z.infer<typeof TodoShape>
-
-export const router = trpc.router<Context>()
-  .query('getTodos', {
-    async resolve() {
-      return await $fetch<Todo[]>(`${baseURL}/todos`)
-    },
-  })
-  .query('getTodo', {
-    input: z.number(),
-    async resolve(req) {
-      const data = await $fetch<Todo>(`${baseURL}/todos/${req.input}`)
-      return data
-    },
-  })
-  .mutation('addTodo', {
-    input: TodoShape,
-    async resolve(req) {
-      // console.log(req.input)
-      return await $fetch<Todo>(`${baseURL}/todos`, {
-        method: 'POST',
-        body: req.input,
-      })
-    },
-  })
-  .query('getExamples', {
-    async resolve({ ctx }) {
-      return ctx.prisma.example.findMany()
-    },
-  })
-  .mutation('addExample', {
-    input: z.object({
-      name: z.string(),
-    }),
-    async resolve({ ctx, input }) {
-      return await ctx.prisma.example.create({ data: input })
-    },
-  })
+export const router = appRouter
 
 export async function createContext(event: CompatibilityEvent) {
   // Create your context based on the request object
@@ -65,4 +18,4 @@ export async function createContext(event: CompatibilityEvent) {
   }
 }
 
-type Context = inferAsyncReturnType<typeof createContext>
+export type Context = inferAsyncReturnType<typeof createContext>

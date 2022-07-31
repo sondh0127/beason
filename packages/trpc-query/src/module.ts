@@ -40,7 +40,7 @@ export default defineNuxtModule<ModuleOptions>({
     addAutoImport([
       { name: 'useQuery', from: join(runtimeDir, 'client') },
       { name: 'useMutation', from: join(runtimeDir, 'client') },
-      // { name: 'useClient', from: join(runtimeDir, 'client') },
+      { name: 'useInfiniteQuery', from: join(runtimeDir, 'client') },
       // { name: 'useClientHeaders', from: join(runtimeDir, 'client') },
       // { name: 'getQueryKey', from: join(runtimeDir, 'client') },
     ])

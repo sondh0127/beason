@@ -34,6 +34,17 @@ export const router = trpc.router<Context>()
         body: req.input,
       })
     },
+  }).query('getInfiniteTodos', {
+    input: z.object({
+      cursor: z.number().nullish(),
+      limit: z.number().min(1).max(100).nullish(),
+    }),
+    async resolve({ input }) {
+      const limit = input.limit ?? 50
+      const { cursor } = input
+
+      // const items = await prisma
+    },
   })
 
 export async function createContext(event: CompatibilityEvent) {
