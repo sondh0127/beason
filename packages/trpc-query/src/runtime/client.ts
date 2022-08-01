@@ -1,11 +1,13 @@
 import type { TRPCClient, TRPCClientErrorLike, TRPCRequestOptions } from '@trpc/client'
 import type { ProcedureRecord, inferProcedureInput, inferProcedureOutput } from '@trpc/server'
-import type { UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions } from 'vue-query'
+import type { InvalidateOptions, InvalidateQueryFilters, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions } from 'vue-query'
 import {
   useInfiniteQuery as __useInfiniteQuery,
   useMutation as __useMutation,
   useQuery as __useQuery,
+  useQueryClient as __useQueryClient,
 } from 'vue-query'
+import type { MaybeRefDeep } from 'vue-query/lib/vuejs/types'
 import type { router } from '~/server/trpc'
 
 // interface TRouter extends AnyRouter {}
@@ -115,4 +117,21 @@ export function useInfiniteQuery<
   }
 
   return query
+}
+
+export function useQueryClient(id?: string) {
+  const client = __useQueryClient(id)
+  return {
+    invalidateQueries: async<
+      TPath extends keyof TRouter['_def']['queries'] & string,
+      TPageData extends TQueryValues[TPath]['output'],
+      TInput extends inferProcedureInput<TRouter['_def']['queries'][TPath]>,
+      >(
+      pathAndInput?: [TPath, TInput?] | TPath,
+      filters?: MaybeRefDeep<InvalidateQueryFilters<TPageData>>,
+      options?: MaybeRefDeep<InvalidateOptions>,
+    ) => {
+      client.invalidateQueries(pathAndInput as any, filters, options)
+    },
+  }
 }

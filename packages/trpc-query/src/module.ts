@@ -41,7 +41,7 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'useQuery', from: join(runtimeDir, 'client') },
       { name: 'useMutation', from: join(runtimeDir, 'client') },
       { name: 'useInfiniteQuery', from: join(runtimeDir, 'client') },
-      { name: 'useQueryClient', from: 'vue-query' },
+      { name: 'useQueryClient', from: join(runtimeDir, 'client') },
       // { name: 'useClientHeaders', from: join(runtimeDir, 'client') },
       // { name: 'getQueryKey', from: join(runtimeDir, 'client') },
     ])
