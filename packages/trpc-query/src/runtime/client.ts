@@ -115,7 +115,7 @@ export function useInfiniteQuery<
 
   // const actualOpts = useSSRQueryOptionsIfNeeded(pathAndInput, opts)
 
-  return __useInfiniteQuery(
+  const query = __useInfiniteQuery(
     pathAndInput,
     ({ pageParam }) => {
       const actualInput = { ...(input ?? {}), cursor: pageParam }
@@ -123,4 +123,12 @@ export function useInfiniteQuery<
     },
     opts,
   )
+
+  if (opts?.ssr) {
+    onServerPrefetch(async () => {
+      await query.suspense()
+    })
+  }
+
+  return query
 }

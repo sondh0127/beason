@@ -70,12 +70,11 @@ async function markDone(id: string) {
 }
 
 const { data: iData, hasNextPage, fetchNextPage } = useInfiniteQuery(
-  ['todo.findManyTodoInfinity', { take: 1 }],
+  ['todo.findManyTodoInfinity', { take: 3 }],
   {
-    getNextPageParam: (lastPage) => {
-      return lastPage.nextCursor
-    },
+    getNextPageParam: lastPage => lastPage.nextCursor,
     refetchOnWindowFocus: false,
+    ssr: true,
   },
 )
 
@@ -85,21 +84,21 @@ useInfiniteScroll(
   el,
   () => {
     // load more
-    // if (hasNextPage?.value)
-    //   fetchNextPage()
+    if (hasNextPage?.value)
+      fetchNextPage()
   },
   { distance: 10 },
 )
 </script>
 
 <template>
-  <!-- <div ref="el" class="flex flex-col gap-2 p-4 w-400px h-150px m-auto overflow-y-scroll bg-gray-500/5 rounded">
-    <div v-for="(page, index) in iData?.pages" :key="index" class="h-30 bg-gray-500/5 rounded p-3">
-      <div v-for="item in page.items" :key="item.id">
-        {{ item.id }} - {{ item.name }}
+  <div ref="el" class="flex flex-col gap-2 p-4 w-400px h-100px m-auto overflow-y-scroll bg-gray-500/5 rounded">
+    <div v-for="(page, index) in iData?.pages" :key="index" class="h-30 bg-red-500/5 rounded p-3">
+      <div v-for="item in page.data" :key="item.id">
+        {{ item.id }} - {{ item.title }}
       </div>
     </div>
-  </div> -->
+  </div>
   <pre class="text-left">{{ JSON.stringify(iData, null, 2) }}</pre>
   <button :disabled="!hasNextPage" class="btn" @click="fetchNextPage()">
     Fetch next
