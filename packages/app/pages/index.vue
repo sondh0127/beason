@@ -36,7 +36,7 @@ const { data: iData, hasNextPage, fetchNextPage } = useInfiniteQuery(
   },
 )
 
-const el = ref<HTMLElement>(null)
+const el = ref<HTMLElement | null>(null)
 
 useInfiniteScroll(
   el,
