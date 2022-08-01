@@ -37,13 +37,13 @@ export const todosRouter = createRouter()
 //   },
 // })
 
-// .mutation('deleteOneTodo', {
-//   input: TodoDeleteOneSchema,
-//   async resolve({ ctx, input }) {
-//     const deleteOneTodo = await ctx.prisma.todo.delete({ where: input.where })
-//     return deleteOneTodo
-//   },
-// })
+  .mutation('deleteOneTodo', {
+    input: TodoDeleteOneSchema,
+    async resolve({ ctx, input }) {
+      const deleteOneTodo = await ctx.prisma.todo.delete({ where: input.where })
+      return deleteOneTodo
+    },
+  })
 
 // .query('findFirstTodo', {
 //   input: TodoFindFirstSchema,
@@ -102,13 +102,13 @@ export const todosRouter = createRouter()
 //   },
 // })
 
-// .mutation('updateOneTodo', {
-//   input: TodoUpdateOneSchema,
-//   async resolve({ ctx, input }) {
-//     const updateOneTodo = await ctx.prisma.todo.update({ where: input.where, data: input.data })
-//     return updateOneTodo
-//   },
-// })
+  .mutation('updateOneTodo', {
+    input: TodoUpdateOneSchema,
+    async resolve({ ctx, input }) {
+      const updateOneTodo = await ctx.prisma.todo.update({ where: input.where, data: input.data })
+      return updateOneTodo
+    },
+  })
 
 // .mutation('upsertOneTodo', {
 //   input: TodoUpsertSchema,

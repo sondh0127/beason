@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import type { Todo } from '@prisma/client'
-import { useQueryClient } from 'vue-query'
 // const client = useClient()
 // const headers = useClientHeaders()
 // const addHeader = () => {
@@ -8,10 +6,7 @@ import { useQueryClient } from 'vue-query'
 //   // console.log(headers.value)
 // }
 
-// const { data: todos, isLoading, error, refetch } = useQuery(['todo.findManyTodo', { take: 10 }], { ssr: true })
-
 const client = useQueryClient()
-
 let newTodo = $ref('')
 const createOneTodo = useMutation(['todo.createOneTodo'], {
   onSettled: () => {
@@ -26,43 +21,6 @@ async function addTodo() {
     })
     newTodo = ''
     console.log('[LOG] ~ file: index.vue ~ line 28 ~ result', result)
-  }
-  catch (e) {
-    console.error(e)
-  }
-}
-
-const deleteOneTodo = useMutation(['todo.deleteOneTodo'], {
-  onSettled: () => {
-    client.invalidateQueries('todo.findManyTodo')
-  },
-})
-
-const editTodo = ref<Todo>()
-const updateOneTodo = useMutation(['todo.updateOneTodo'], {
-  onSettled: () => {
-    client.invalidateQueries('todo.findManyTodo')
-  },
-})
-async function removeTodo(id: string) {
-  try {
-    const result = await deleteOneTodo.mutateAsync({
-      where: { id },
-    })
-    console.log('[LOG] ~ file: index.vue ~ line 42 ~ result', result)
-  }
-  catch (e) {
-    console.error(e)
-  }
-}
-
-async function markDone(id: string) {
-  try {
-    const result = await updateOneTodo.mutateAsync({
-      data: { completed: true },
-      where: { id },
-    })
-    console.log('[LOG] ~ file: index.vue ~ line 48 ~ result', result)
   }
   catch (e) {
     console.error(e)
@@ -99,7 +57,7 @@ useInfiniteScroll(
       </div>
     </div>
   </div>
-  <pre class="text-left">{{ JSON.stringify(iData, null, 2) }}</pre>
+  <!-- <pre class="text-left">{{ JSON.stringify(iData, null, 2) }}</pre> -->
   <button :disabled="!hasNextPage" class="btn" @click="fetchNextPage()">
     Fetch next
   </button>
@@ -121,41 +79,9 @@ useInfiniteScroll(
     <button class="btn" @click="addTodo">
       Add Todo
     </button>
-    <!-- <button class="btn" @click="() => refetch()">
-      Refresh
-    </button> -->
   </div>
-  <!-- <div v-if="isLoading">
-    Loading...
-  </div>
-  <div v-else-if="error?.data?.code">
-    Error: {{ error.data.code }}
-  </div>
-  <div v-else-if="todos">
-    List of todos:
-    <ul>
-      <li v-for="t in todos" :key="t.id" class="flex gap-2 justify-center">
-        <template v-if="editTodo?.id === t.id">
-          <InputTodo v-model:task="editTodo.title" @keydown.enter="updateOneTodo" />
-          <button @click="editTodo = undefined">
-            <div class="i-carbon:close" />
-          </button>
-        </template>
-        <template v-else>
-          <div :class="{ completed: t.completed }" @click="editTodo = t">
-            Title: {{ t.title }}
-          </div>
-          <button @click="removeTodo(t.id)">
-            <div class="i-carbon:close" />
-          </button>
-          <button @click="markDone(t.id)">
-            <div class="i-carbon:checkmark" />
-          </button>
-        </template>
-      </li>
-    </ul>
+  <TodoList />
 
-  </div> -->
   <!-- <button class="btn" @click="addHeader">
       Add header
     </button> -->
