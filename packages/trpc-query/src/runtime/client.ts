@@ -1,5 +1,5 @@
 import type { TRPCClient, TRPCClientErrorLike, TRPCRequestOptions } from '@trpc/client'
-import type { ProcedureRecord, inferProcedureInput, inferProcedureOutput } from '@trpc/server'
+import type { ProcedureRecord, inferHandlerInput, inferProcedureInput, inferProcedureOutput } from '@trpc/server'
 import type { InvalidateOptions, InvalidateQueryFilters, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions } from 'vue-query'
 import {
   useInfiniteQuery as __useInfiniteQuery,
@@ -45,15 +45,13 @@ type TMutationValues = inferProcedures<TMutations>
 type TInfiniteQueryNames = inferInfiniteQueryNames<TQueries>
 
 type TError = TRPCClientErrorLike<TRouter>
-
 export function useQuery<
   TPath extends keyof TQueryValues & string,
   TQueryFnData = TQueryValues[TPath]['output'],
   TData = TQueryValues[TPath]['output'],
-  TInput = Omit<TQueryValues[TPath]['input'], 'cursor'>,
   >(
-  pathAndInput: [path: TPath, input: TInput],
-  opts?: Omit<UseQueryOptions<TQueryFnData, TError, TData, [TPath, TInput]>, 'queryKey' | 'queryFn'> & { ssr?: boolean },
+  pathAndInput: [path: TPath, ...args: inferHandlerInput<TQueries[TPath]>],
+  opts?: Omit<UseQueryOptions<TQueryFnData, TError, TData, [TPath, ...inferHandlerInput<TQueries[TPath]>]>, 'queryKey' | 'queryFn'> & { ssr?: boolean },
   trpcOptions?: TRPCRequestOptions,
 ) {
   const [path, input] = pathAndInput
@@ -71,20 +69,22 @@ export function useQuery<
   }
   return query
 }
-
+// inferHandlerInput<TMutations[TPath]>
 export function useMutation<
   TPath extends keyof TMutationValues & string,
   TContext = unknown,
   >(
-  path: TPath | [TPath],
-  opts?: Omit<UseMutationOptions<TMutationValues[TPath]['output'], TError, TMutationValues[TPath]['input'], TContext>, 'mutationFn'>,
+  // path: TPath | [TPath],
+  path: TPath,
+  opts?: Omit<UseMutationOptions<TMutationValues[TPath]['output'], TError, [...inferHandlerInput<TMutations[TPath]>], TContext>, 'mutationFn'>,
   trpcOptions?: TRPCRequestOptions,
 ) {
   const { $client } = useNuxtApp()
 
   return __useMutation((input) => {
-    const actualPath = Array.isArray(path) ? path[0] : path
-    return $client.mutation(actualPath, input, trpcOptions)
+    // const actualPath = Array.isArray(path) ? path[0] : path
+    const pathAndInput = [path, ...input] as const
+    return $client.mutation(...pathAndInput, trpcOptions)
   }, opts)
 }
 
@@ -125,7 +125,7 @@ export function useQueryClient(id?: string) {
     invalidateQueries: async<
       TPath extends keyof TRouter['_def']['queries'] & string,
       TPageData extends TQueryValues[TPath]['output'],
-      TInput extends inferProcedureInput<TRouter['_def']['queries'][TPath]>,
+      TInput extends inferProcedureInput<TQueries[TPath]>,
       >(
       pathAndInput?: [TPath, TInput?] | TPath,
       filters?: MaybeRefDeep<InvalidateQueryFilters<TPageData>>,
