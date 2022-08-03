@@ -2,7 +2,7 @@ import type { LoggerInstance, Session } from 'next-auth'
 import type { BuiltInProviderType, RedirectableProviderType } from 'next-auth/providers'
 // import { proxyLogger } from 'next-auth/utils/logger'
 import parseUrl from './parse-url'
-import type { ClientSafeProvider, LiteralUnion, SessionProviderProps, SignInAuthorizationParams, SignInOptions, SignInResponse, UseSessionOptions } from './types'
+import type { ClientSafeProvider, LiteralUnion, SessionProviderProps, SignInAuthorizationParams, SignInOptions, SignInResponse, SignOutParams, SignOutResponse, UseSessionOptions } from './types'
 import type { CtxOrReq, NextAuthClientConfig } from './_utils'
 import { BroadcastChannel, apiBaseUrl, fetchData, now } from './_utils'
 
@@ -297,4 +297,47 @@ export function createSessionProvider(props: SessionProviderProps = {}) {
   )
 
   return sessionValue
+}
+
+/**
+ * Signs the user out, by removing the session cookie.
+ * Automatically adds the CSRF token to the request.
+ *
+ * [Documentation](https://next-auth.js.org/getting-started/client#signout)
+ */
+export async function signOut<R extends boolean = true>(
+  options?: SignOutParams<R>,
+): Promise<R extends true ? undefined : SignOutResponse> {
+  const { callbackUrl = window.location.href } = options ?? {}
+  const baseUrl = apiBaseUrl(__NEXTAUTH)
+  const fetchOptions = {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    // @ts-expect-error
+    body: new URLSearchParams({
+      csrfToken: await getCsrfToken(),
+      callbackUrl,
+      json: true,
+    }),
+  }
+  const res = await fetch(`${baseUrl}/signout`, fetchOptions)
+  const data = await res.json()
+
+  broadcast.post({ event: 'session', data: { trigger: 'signout' } })
+
+  if (options?.redirect ?? true) {
+    const url = data.url ?? callbackUrl
+    window.location.href = url
+    // If url contains a hash, the browser does not reload the page. We reload manually
+    if (url.includes('#'))
+      window.location.reload()
+    // @ts-expect-error
+    return
+  }
+
+  await __NEXTAUTH._getSession({ event: 'storage' })
+
+  return data
 }

@@ -55,12 +55,15 @@ async function loginWithGithub() {
 }
 
 const session = useSession()
-console.log('[LOG] ~ file: index.vue ~ line 58 ~ session', session)
 </script>
 
 <template>
-  <button class="btn" @click="loginWithGithub">
+  <pre>{{ JSON.stringify(session, null, 2) }}</pre>
+  <button class="btn" @click="() => signIn()">
     Login
+  </button>
+  <button class="btn" @click="() => signOut()">
+    Logout
   </button>
   <div ref="el" class="flex flex-col gap-2 p-4 w-400px h-100px m-auto overflow-y-scroll bg-gray-500/5 rounded">
     <div v-for="(page, index) in iData?.pages" :key="index" class="h-30 bg-red-500/5 rounded p-3">
