@@ -12,6 +12,7 @@ useHead({
 <template>
   <NuxtLayout cl>
     <NuxtPage />
+    <a href="/api/auth/signin" class="buttonPrimary">Sign in</a>
   </NuxtLayout>
 </template>
 

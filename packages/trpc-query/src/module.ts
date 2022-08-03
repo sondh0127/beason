@@ -41,6 +41,7 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'useMutation', from: join(runtimeDir, 'client') },
       { name: 'useInfiniteQuery', from: join(runtimeDir, 'client') },
       { name: 'useQueryClient', from: join(runtimeDir, 'client') },
+      { name: 'signIn', from: join(runtimeDir, 'auth-client') },
       // { name: 'useClientHeaders', from: join(runtimeDir, 'client') },
       // { name: 'getQueryKey', from: join(runtimeDir, 'client') },
     ])
@@ -48,10 +49,16 @@ export default defineNuxtModule<ModuleOptions>({
     // add server handler endpoint for trpc
     // const handlerPath = join(nuxt.options.buildDir, 'trpc-handler.ts')
     const handlerPath = join(runtimeDir, 'trpc-handler.ts')
+    const handlerPathAuth = join(runtimeDir, 'next-auth.ts')
 
     addServerHandler({
       route: `${finalConfig.endpoint}/*`,
       handler: handlerPath,
+    })
+
+    addServerHandler({
+      route: '/api/auth/**',
+      handler: handlerPathAuth,
     })
   },
 })

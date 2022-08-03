@@ -5,6 +5,7 @@
 //   // headers.value.cookie = 'counter=69'
 //   // console.log(headers.value)
 // }
+// import { signIn } from 'next-auth/react'
 
 const client = useQueryClient()
 let newTodo = $ref('')
@@ -47,9 +48,17 @@ useInfiniteScroll(
   },
   { distance: 10 },
 )
+
+async function loginWithGithub() {
+  const res = await signIn()
+  console.log('[LOG] ~ file: index.vue ~ line 54 ~ res', res)
+}
 </script>
 
 <template>
+  <button class="btn" @click="loginWithGithub">
+    Login
+  </button>
   <div ref="el" class="flex flex-col gap-2 p-4 w-400px h-100px m-auto overflow-y-scroll bg-gray-500/5 rounded">
     <div v-for="(page, index) in iData?.pages" :key="index" class="h-30 bg-red-500/5 rounded p-3">
       <div v-for="item in page.data" :key="item.id">
