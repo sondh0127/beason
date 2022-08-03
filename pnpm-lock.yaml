@@ -4,9 +4,9 @@ importers:
 
   .:
     specifiers:
-      trpc-query: workspace:*
+      nuxt-trpc-query: workspace:*
     devDependencies:
-      trpc-query: link:packages/trpc-query
+      nuxt-trpc-query: link:packages/nuxt-trpc-query
 
   packages/app:
     specifiers:
@@ -47,7 +47,22 @@ importers:
       vue-query: 1.25.2
       zod: 3.17.10
 
-  packages/trpc-query:
+  packages/nuxt-next-auth:
+    specifiers:
+      '@nuxt/kit': ^3.0.0-rc.6
+      '@nuxt/module-builder': latest
+      '@nuxtjs/eslint-config-typescript': latest
+      eslint: latest
+      nuxt: ^3.0.0-rc.6
+    dependencies:
+      '@nuxt/kit': 3.0.0-rc.6
+    devDependencies:
+      '@nuxt/module-builder': 0.1.7
+      '@nuxtjs/eslint-config-typescript': 10.0.0_eslint@8.21.0
+      eslint: 8.21.0
+      nuxt: 3.0.0-rc.6
+
+  packages/nuxt-trpc-query:
     specifiers:
       '@nuxt/kit': ^3.0.0-rc.6
       '@nuxt/module-builder': latest

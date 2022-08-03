@@ -7,8 +7,7 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     '@pinia/nuxt',
     '@nuxtjs/color-mode',
-    // 'trpc-nuxt',
-    'trpc-query',
+    'nuxt-trpc-query',
   ],
   experimental: {
     reactivityTransform: true,
