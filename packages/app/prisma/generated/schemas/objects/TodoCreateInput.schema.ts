@@ -1,6 +1,6 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client'
 
 const Schema: z.ZodType<Prisma.TodoCreateInput> = z
   .object({
@@ -8,6 +8,6 @@ const Schema: z.ZodType<Prisma.TodoCreateInput> = z
     completed: z.boolean().optional(),
     createdAt: z.date().optional(),
   })
-  .strict();
+  .strict()
 
-export const TodoCreateInputObjectSchema = Schema;
+export const TodoCreateInputObjectSchema = Schema

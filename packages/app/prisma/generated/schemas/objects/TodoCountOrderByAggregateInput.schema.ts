@@ -1,7 +1,6 @@
-import { z } from 'zod';
-import { SortOrderSchema } from '../enums/SortOrder.schema';
-
-import type { Prisma } from '@prisma/client';
+import { z } from 'zod'
+import type { Prisma } from '@prisma/client'
+import { SortOrderSchema } from '../enums/SortOrder.schema'
 
 const Schema: z.ZodType<Prisma.TodoCountOrderByAggregateInput> = z
   .object({
@@ -10,6 +9,6 @@ const Schema: z.ZodType<Prisma.TodoCountOrderByAggregateInput> = z
     completed: z.lazy(() => SortOrderSchema).optional(),
     createdAt: z.lazy(() => SortOrderSchema).optional(),
   })
-  .strict();
+  .strict()
 
-export const TodoCountOrderByAggregateInputObjectSchema = Schema;
+export const TodoCountOrderByAggregateInputObjectSchema = Schema
