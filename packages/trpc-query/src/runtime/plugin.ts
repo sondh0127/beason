@@ -6,6 +6,8 @@ import {
   hydrate,
 } from 'vue-query'
 import * as trpc from '@trpc/client'
+import type { SessionContextValue } from './session-context'
+import { createSessionProvider } from './auth-client'
 import { defineNuxtPlugin } from '#app'
 import type { router } from '~/server/trpc'
 
@@ -14,6 +16,7 @@ declare type AppRouter = typeof router
 declare module '#app' {
   interface NuxtApp {
     $client: trpc.TRPCClient<AppRouter>
+    $session: SessionContextValue | undefined
   }
 }
 
@@ -55,4 +58,10 @@ export default defineNuxtPlugin((nuxtApp) => {
       hydrate(queryClient, vueQueryClient.value)
     })
   }
+
+  const sessionValue = createSessionProvider()
+  console.log('[LOG] ~ file: plugin.ts ~ line 63 ~ sessionValue', sessionValue)
+
+  // // nuxt auth
+  nuxtApp.provide('session', sessionValue)
 })

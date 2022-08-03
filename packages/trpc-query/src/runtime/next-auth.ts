@@ -7,11 +7,12 @@ import {
   useCookies,
   useQuery,
 } from 'h3'
-import type { NextAuthAction, NextAuthOptions } from 'next-auth'
+import type { NextAuthAction, NextAuthOptions, Session } from 'next-auth'
 import type { RequestInternal } from 'next-auth/core'
 import { NextAuthHandler } from 'next-auth/core'
 import { createURL } from 'ufo'
 import GithubProvider from 'next-auth/providers/github'
+import cookie from 'cookie'
 
 const options: NextAuthOptions = {
   providers: [
@@ -22,6 +23,11 @@ const options: NextAuthOptions = {
       clientSecret: 'f299271f4191972ee2f15dbef06071f5e4fb7da4',
     }),
   ],
+}
+
+const IMPORT_META_ENV = {
+  VITE_NEXTAUTH_URL: 'http://localhost:3000',
+  VITE_NEXTAUTH_SECRET: '4260a8a648e9cd8503485d46f93d1bd6',
 }
 
 const DATABASE_URL = 'sqlite://localhost/:memory:?synchronize=true'
@@ -48,7 +54,7 @@ export default defineEventHandler(async (event) => {
 
   const nextRequest: RequestInternal = {
     // host: import.meta.env.VITE_NEXTAUTH_URL,
-    host: 'http://localhost:3000',
+    host: IMPORT_META_ENV.VITE_NEXTAUTH_URL,
     body,
     cookies: useCookies(event),
     query: useQuery(event),
@@ -92,3 +98,28 @@ export default defineEventHandler(async (event) => {
   }
   return nextBody
 })
+
+export async function getServerSession(
+  request: Request,
+  options: NextAuthOptions,
+): Promise<Session | null> {
+  // options.secret = import.meta.env.VITE_NEXTAUTH_SECRET
+
+  const session = await NextAuthHandler<Session>({
+    req: {
+      // host: import.meta.env.VITE_NEXTAUTH_URL,
+      host: IMPORT_META_ENV.VITE_NEXTAUTH_URL,
+      action: 'session',
+      method: 'GET',
+      cookies: cookie.parse(request.headers.get('cookie') ?? ''),
+      headers: request.headers,
+    },
+    options,
+  })
+
+  const { body } = session
+
+  if (body && Object.keys(body).length)
+    return body as Session
+  return null
+}

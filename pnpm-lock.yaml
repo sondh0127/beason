@@ -54,6 +54,7 @@ importers:
       '@nuxtjs/eslint-config-typescript': latest
       '@trpc/client': ^9.26.0
       '@trpc/server': ^9.26.0
+      cookie: ^0.5.0
       dedent: ^0.7.0
       defu: ^6.0.0
       eslint: latest
@@ -67,6 +68,7 @@ importers:
       '@nuxt/kit': 3.0.0-rc.6
       '@trpc/client': 9.26.2_@trpc+server@9.26.2
       '@trpc/server': 9.26.2
+      cookie: 0.5.0
       dedent: 0.7.0
       defu: 6.0.0
       h3: 0.7.12
@@ -2572,6 +2574,11 @@ packages:
 
   /cookie/0.4.2:
     resolution: {integrity: sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==}
+    engines: {node: '>= 0.6'}
+    dev: false
+
+  /cookie/0.5.0:
+    resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
     engines: {node: '>= 0.6'}
     dev: false
 

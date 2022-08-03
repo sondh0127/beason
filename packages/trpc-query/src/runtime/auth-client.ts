@@ -1,10 +1,10 @@
-import type { LoggerInstance } from 'next-auth'
+import type { LoggerInstance, Session } from 'next-auth'
 import type { BuiltInProviderType, RedirectableProviderType } from 'next-auth/providers'
 // import { proxyLogger } from 'next-auth/utils/logger'
 import parseUrl from './parse-url'
-import type { ClientSafeProvider, LiteralUnion, SignInAuthorizationParams, SignInOptions, SignInResponse } from './types'
+import type { ClientSafeProvider, LiteralUnion, SessionProviderProps, SignInAuthorizationParams, SignInOptions, SignInResponse, UseSessionOptions } from './types'
 import type { CtxOrReq, NextAuthClientConfig } from './_utils'
-import { apiBaseUrl, fetchData } from './_utils'
+import { BroadcastChannel, apiBaseUrl, fetchData, now } from './_utils'
 
 // This behaviour mirrors the default behaviour for getting the site name that
 // happens server side in server/index.js
@@ -93,7 +93,6 @@ export async function signIn<
 
   const baseUrl = apiBaseUrl(__NEXTAUTH)
   const providers = await getProviders()
-  console.log('[LOG] ~ file: auth-client.ts ~ line 96 ~ providers', providers)
 
   if (!providers) {
     window.location.href = `${baseUrl}/error`
@@ -154,4 +153,148 @@ export async function signIn<
     ok: res.ok,
     url: error ? null : data.url,
   } as any
+}
+
+/**
+ * Vue Composables that gives you access
+ * to the logged in user's session data.
+ *
+ * [Documentation](https://next-auth.js.org/getting-started/client#usesession)
+ */
+export function useSession<R extends boolean>(options?: UseSessionOptions<R>) {
+  // // @ts-expect-error Satisfy TS if branch on line below
+  const { $session } = useNuxtApp()
+  console.log('[LOG] ~ file: auth-client.ts ~ line 167 ~ $session', $session)
+  // if (!value && process.env.NODE_ENV !== 'production') {
+  //   throw new Error(
+  //     '[next-auth]: `useSession` must be wrapped in a <SessionProvider />',
+  //   )
+  // }
+
+  // const { required, onUnauthenticated } = options ?? {}
+
+  // const requiredAndNotLoading = required && value.status === 'unauthenticated'
+
+  // watchEffect(() => {
+  //   if (requiredAndNotLoading) {
+  //     const url = `/api/auth/signin?${new URLSearchParams({
+  //       error: 'SessionRequired',
+  //       callbackUrl: window.location.href,
+  //     })}`
+  //     if (onUnauthenticated)
+  //       onUnauthenticated()
+  //     else window.location.href = url
+  //   }
+  // })
+
+  // if (requiredAndNotLoading)
+  //   return { data: value.data, status: 'loading' } as const
+
+  return $session
+}
+
+export type GetSessionParams = CtxOrReq & {
+  event?: 'storage' | 'timer' | 'hidden' | string
+  triggerEvent?: boolean
+  broadcast?: boolean
+}
+
+const broadcast = BroadcastChannel()
+
+export async function getSession(params?: GetSessionParams) {
+  const session = await fetchData<Session>(
+    'session',
+    __NEXTAUTH,
+    logger,
+    params,
+  )
+  if (params?.broadcast ?? true)
+    broadcast.post({ event: 'session', data: { trigger: 'getSession' } })
+
+  return session
+}
+
+export function createSessionProvider(props: SessionProviderProps = {}) {
+  const { basePath } = props
+
+  if (basePath)
+    __NEXTAUTH.basePath = basePath
+
+  /**
+   * If session was `null`, there was an attempt to fetch it,
+   * but it failed, but we still treat it as a valid initial value.
+   */
+  const hasInitialSession = props.session !== undefined
+
+  /** If session was passed, initialize as already synced */
+  __NEXTAUTH._lastSync = hasInitialSession ? now() : 0
+
+  if (hasInitialSession)
+    __NEXTAUTH._session = props.session
+
+  // handle initial value
+  const session = ref<Session | undefined>(props.session)
+  /** If session was passed, initialize as not loading */
+  const loading = ref(!hasInitialSession)
+
+  watchEffect(() => {
+    __NEXTAUTH._getSession = async ({ event } = {}) => {
+      console.log('[LOG] ~ file: auth-client.ts ~ line 242 ~ event', event)
+      try {
+        const storageEvent = event === 'storage'
+        // We should always update if we don't have a client session yet
+        // or if there are events from other tabs/windows
+        if (storageEvent || __NEXTAUTH._session === undefined) {
+          __NEXTAUTH._lastSync = now()
+          __NEXTAUTH._session = await getSession({
+            broadcast: !storageEvent,
+          })
+          session.value = __NEXTAUTH._session
+          return
+        }
+
+        if (
+          // If there is no time defined for when a session should be considered
+          // stale, then it's okay to use the value we have until an event is
+          // triggered which updates it
+          !event
+          // If the client doesn't have a session then we don't need to call
+          // the server to check if it does (if they have signed in via another
+          // tab or window that will come through as a "stroage" event
+          // event anyway)
+          || __NEXTAUTH._session === null
+          // Bail out early if the client session is not stale yet
+          || now() < __NEXTAUTH._lastSync
+        )
+          return
+
+        // An event or session staleness occurred, update the client session.
+        __NEXTAUTH._lastSync = now()
+        __NEXTAUTH._session = await getSession()
+        session.value = __NEXTAUTH._session
+      }
+      catch (error) {
+        logger.error('CLIENT_SESSION_ERROR', error as Error)
+      }
+      finally {
+        loading.value = false
+      }
+    }
+
+    __NEXTAUTH._getSession()
+  })
+
+  onBeforeUnmount(() => {
+    __NEXTAUTH._lastSync = 0
+    __NEXTAUTH._session = undefined
+    __NEXTAUTH._getSession = () => { }
+  })
+
+  const sessionValue = computed(() => ({
+    data: session.value,
+    status: loading.value ? 'loading' : session.value ? 'authenticated' : 'unauthenticated',
+  }),
+  )
+
+  return sessionValue
 }

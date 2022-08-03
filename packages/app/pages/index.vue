@@ -53,6 +53,9 @@ async function loginWithGithub() {
   const res = await signIn()
   console.log('[LOG] ~ file: index.vue ~ line 54 ~ res', res)
 }
+
+const session = useSession()
+console.log('[LOG] ~ file: index.vue ~ line 58 ~ session', session)
 </script>
 
 <template>

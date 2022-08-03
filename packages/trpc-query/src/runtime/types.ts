@@ -1,3 +1,4 @@
+import type { Session } from 'next-auth'
 import type { BuiltInProviderType, ProviderType } from 'next-auth/providers'
 
 /**
@@ -38,4 +39,27 @@ export interface ClientSafeProvider {
   type: ProviderType
   signinUrl: string
   callbackUrl: string
+}
+
+export interface UseSessionOptions<R extends boolean> {
+  required: R
+  /** Defaults to `signIn` */
+  onUnauthenticated?: () => void
+}
+
+/** @docs: https://next-auth.js.org/getting-started/client#options */
+export interface SessionProviderProps {
+  session?: Session | null
+  baseUrl?: string
+  basePath?: string
+  /**
+   * A time interval (in seconds) after which the session will be re-fetched.
+   * If set to `0` (default), the session is not polled.
+   */
+  refetchInterval?: number
+  /**
+   * `SessionProvider` automatically refetches the session when the user switches between windows.
+   * This option activates this behaviour if set to `true` (default).
+   */
+  refetchOnWindowFocus?: boolean
 }

@@ -42,6 +42,7 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'useInfiniteQuery', from: join(runtimeDir, 'client') },
       { name: 'useQueryClient', from: join(runtimeDir, 'client') },
       { name: 'signIn', from: join(runtimeDir, 'auth-client') },
+      { name: 'useSession', from: join(runtimeDir, 'auth-client') },
       // { name: 'useClientHeaders', from: join(runtimeDir, 'client') },
       // { name: 'getQueryKey', from: join(runtimeDir, 'client') },
     ])
