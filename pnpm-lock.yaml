@@ -80,9 +80,6 @@ importers:
       eslint: 8.21.0
       nuxt: 3.0.0-rc.6
 
-  packages/trpc-query/playground:
-    specifiers: {}
-
 packages:
 
   /@ampproject/remapping/2.2.0:
