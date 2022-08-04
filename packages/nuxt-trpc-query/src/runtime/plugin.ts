@@ -8,7 +8,6 @@ import {
 import * as trpc from '@trpc/client'
 import type { SessionContextValue } from './session-context'
 import { createSessionProvider } from './auth-client'
-import { getServerSession, options as nextAuthOptions } from './next-auth'
 import { defineNuxtPlugin } from '#app'
 import type { router } from '~/server/trpc'
 
@@ -60,13 +59,9 @@ export default defineNuxtPlugin((nuxtApp) => {
     })
   }
 
-  // nuxt auth
   const sessionValue = createSessionProvider()
+  console.log('[LOG] ~ file: plugin.ts ~ line 63 ~ sessionValue', sessionValue)
 
+  // // nuxt auth
   nuxtApp.provide('session', sessionValue)
-
-  addRouteMiddleware('global-test', async () => {
-    console.log('this global middleware was added in a plugin and will be run on every route change')
-    const session = await getServerSession(undefined, nextAuthOptions)
-  }, { global: true })
 })

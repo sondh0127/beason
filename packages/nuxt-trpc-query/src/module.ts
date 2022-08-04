@@ -63,10 +63,5 @@ export default defineNuxtModule<ModuleOptions>({
       route: '/api/auth/**',
       handler: handlerPathAuth,
     })
-
-    addServerHandler({
-      handler: join(runtimeDir, 'next-auth-middleware.ts'),
-      middleware: true,
-    })
   },
 })
