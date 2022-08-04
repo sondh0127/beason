@@ -58,7 +58,7 @@ const session = useSession()
 </script>
 
 <template>
-  <pre>{{ JSON.stringify(session, null, 2) }}</pre>
+  <pre class="text-left">{{ JSON.stringify(session, null, 2) }}</pre>
   <button class="btn" @click="() => signIn()">
     Login
   </button>

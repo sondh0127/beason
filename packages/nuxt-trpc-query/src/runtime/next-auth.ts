@@ -1,20 +1,18 @@
 import {
   appendHeader,
-  createApp,
   sendRedirect,
   setCookie,
   useBody,
   useCookies,
   useQuery,
 } from 'h3'
-import type { NextAuthAction, NextAuthOptions, Session } from 'next-auth'
+import type { NextAuthAction, NextAuthOptions } from 'next-auth'
 import type { RequestInternal } from 'next-auth/core'
 import { NextAuthHandler } from 'next-auth/core'
 import { createURL } from 'ufo'
 import GithubProvider from 'next-auth/providers/github'
-import cookie from 'cookie'
 
-const options: NextAuthOptions = {
+export const options: NextAuthOptions = {
   providers: [
     GithubProvider.default({
       // clientId: import.meta.env.VITE_GITHUB_CLIENT_ID,
@@ -98,28 +96,3 @@ export default defineEventHandler(async (event) => {
   }
   return nextBody
 })
-
-export async function getServerSession(
-  request: Request,
-  options: NextAuthOptions,
-): Promise<Session | null> {
-  // options.secret = import.meta.env.VITE_NEXTAUTH_SECRET
-
-  const session = await NextAuthHandler<Session>({
-    req: {
-      // host: import.meta.env.VITE_NEXTAUTH_URL,
-      host: IMPORT_META_ENV.VITE_NEXTAUTH_URL,
-      action: 'session',
-      method: 'GET',
-      cookies: cookie.parse(request.headers.get('cookie') ?? ''),
-      headers: request.headers,
-    },
-    options,
-  })
-
-  const { body } = session
-
-  if (body && Object.keys(body).length)
-    return body as Session
-  return null
-}
