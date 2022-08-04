@@ -1,6 +1,5 @@
 import {
   appendHeader,
-  createApp,
   sendRedirect,
   setCookie,
   useBody,
@@ -12,7 +11,6 @@ import type { RequestInternal } from 'next-auth/core'
 import { NextAuthHandler } from 'next-auth/core'
 import { createURL } from 'ufo'
 import GithubProvider from 'next-auth/providers/github'
-import cookie from 'cookie'
 
 const options: NextAuthOptions = {
   providers: [
@@ -34,7 +32,7 @@ const DATABASE_URL = 'sqlite://localhost/:memory:?synchronize=true'
 
 export default defineEventHandler(async (event) => {
   const { req, res } = event
-  console.log('[LOG] ~ file: next-auth.ts ~ line 31 ~ req', req.url)
+  // console.log('[LOG] ~ file: next-auth.ts ~ line 31 ~ req', req.url)
 
   const $url = createURL(req.url!)
   // // const config = useRuntimeConfig().public.trpcQuery
@@ -48,7 +46,6 @@ export default defineEventHandler(async (event) => {
   const endpoint = '/api/auth'
 
   const nextauth = $url.pathname.substring(endpoint.length).split('/')
-  console.log('[LOG] ~ file: next-auth.ts ~ line 44 ~ nextauth', nextauth)
   // // options.secret = import.meta.env.VITE_NEXTAUTH_SECRET
   // options.secret = '4260a8a648e9cd8503485d46f93d1bd6'
 
@@ -64,9 +61,7 @@ export default defineEventHandler(async (event) => {
     providerId: nextauth[2]?.split('?')[0],
     error: nextauth[2]?.split('?')[0],
   }
-  console.log('[LOG] ~ file: next-auth.ts ~ line 60 ~ nextRequest', nextRequest)
 
-  console.log('[LOG] ~ file: next-auth.ts ~ line 73 ~ options', options)
   const {
     status = 200,
     headers,
@@ -98,28 +93,3 @@ export default defineEventHandler(async (event) => {
   }
   return nextBody
 })
-
-export async function getServerSession(
-  request: Request,
-  options: NextAuthOptions,
-): Promise<Session | null> {
-  // options.secret = import.meta.env.VITE_NEXTAUTH_SECRET
-
-  const session = await NextAuthHandler<Session>({
-    req: {
-      // host: import.meta.env.VITE_NEXTAUTH_URL,
-      host: IMPORT_META_ENV.VITE_NEXTAUTH_URL,
-      action: 'session',
-      method: 'GET',
-      cookies: cookie.parse(request.headers.get('cookie') ?? ''),
-      headers: request.headers,
-    },
-    options,
-  })
-
-  const { body } = session
-
-  if (body && Object.keys(body).length)
-    return body as Session
-  return null
-}

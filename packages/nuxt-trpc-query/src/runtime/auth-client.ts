@@ -293,8 +293,7 @@ export function createSessionProvider(props: SessionProviderProps = {}) {
   const sessionValue = computed(() => ({
     data: session.value,
     status: loading.value ? 'loading' : session.value ? 'authenticated' : 'unauthenticated',
-  }),
-  )
+  }))
 
   return sessionValue
 }

@@ -6,8 +6,12 @@ import {
   hydrate,
 } from 'vue-query'
 import * as trpc from '@trpc/client'
+import type { NextAuthOptions, Session } from 'next-auth'
+import GithubProvider from 'next-auth/providers/github'
+import type { CompatibilityEvent } from 'h3'
+import { NextAuthHandler } from 'next-auth/core'
 import type { SessionContextValue } from './session-context'
-import { createSessionProvider } from './auth-client'
+import { createSessionProvider, getSession } from './auth-client'
 import { defineNuxtPlugin } from '#app'
 import type { router } from '~/server/trpc'
 
@@ -21,7 +25,7 @@ declare module '#app' {
 }
 
 // need to provide the options for query client
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(async (nuxtApp) => {
   const config = useRuntimeConfig().public.trpcQuery
 
   const client = trpc.createTRPCClient<AppRouter>({
@@ -59,9 +63,18 @@ export default defineNuxtPlugin((nuxtApp) => {
     })
   }
 
-  const sessionValue = createSessionProvider()
-  console.log('[LOG] ~ file: plugin.ts ~ line 63 ~ sessionValue', sessionValue)
+  // const sessionValue = createSessionProvider()
 
   // // nuxt auth
-  nuxtApp.provide('session', sessionValue)
+  // nuxtApp.provide('session', sessionValue)
+
+  addRouteMiddleware('global-test', async (from, to) => {
+    const _session = await getSession()
+    if (!_session) {
+      if (process.client && from.path !== '/login')
+
+        return navigateTo('/login')
+    }
+    // return navigateTo('/')
+  }, { global: true })
 })

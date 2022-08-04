@@ -53,15 +53,20 @@ export default defineNuxtModule<ModuleOptions>({
     // const handlerPath = join(nuxt.options.buildDir, 'trpc-handler.ts')
     const handlerPath = join(runtimeDir, 'trpc-handler.ts')
     const handlerPathAuth = join(runtimeDir, 'next-auth.ts')
+    const handlerPathAuthSession = join(runtimeDir, 'next-auth-session.ts')
 
     addServerHandler({
       route: `${finalConfig.endpoint}/*`,
       handler: handlerPath,
     })
-
     addServerHandler({
       route: '/api/auth/**',
       handler: handlerPathAuth,
+    })
+
+    addServerHandler({
+      route: '',
+      handler: handlerPathAuthSession,
     })
   },
 })
