@@ -76,17 +76,15 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   // nuxtApp.provide('session', sessionValue)
 
   addRouteMiddleware('global-auth', async (from, to) => {
-    const res = await $fetch('/api/session2')
-    console.log('[LOG] ~ file: plugin.ts ~ line 80 ~ res', res)
-    if (from.path === '/login')
-      return undefined
-
-    // const _session = await getSession()
-    // if (!_session) {
-    //   if (process.client && from.path !== '/login')
-
-    //     return navigateTo('/login')
-    // }
-    // return navigateTo('/')
+    // // const _session = await $fetch('/api/session')
+    const _session = await getSession()
+    if (_session) {
+      if (from.path === '/login')
+        return navigateTo('/')
+    }
+    else {
+      if (from.path !== '/login')
+        return navigateTo('/hello')
+    }
   }, { global: true })
 })
