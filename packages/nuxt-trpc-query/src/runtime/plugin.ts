@@ -62,19 +62,31 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       hydrate(queryClient, vueQueryClient.value)
     })
   }
+  const sessionValue = useState<Session | null>('auth-session')
+
+  if (process.server) {
+    nuxtApp.hooks.hook('app:redirected', () => {
+
+    })
+  }
 
   // const sessionValue = createSessionProvider()
 
   // // nuxt auth
   // nuxtApp.provide('session', sessionValue)
 
-  addRouteMiddleware('global-test', async (from, to) => {
-    const _session = await getSession()
-    if (!_session) {
-      if (process.client && from.path !== '/login')
+  addRouteMiddleware('global-auth', async (from, to) => {
+    const res = await $fetch('/api/session2')
+    console.log('[LOG] ~ file: plugin.ts ~ line 80 ~ res', res)
+    if (from.path === '/login')
+      return undefined
 
-        return navigateTo('/login')
-    }
+    // const _session = await getSession()
+    // if (!_session) {
+    //   if (process.client && from.path !== '/login')
+
+    //     return navigateTo('/login')
+    // }
     // return navigateTo('/')
   }, { global: true })
 })

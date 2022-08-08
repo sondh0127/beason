@@ -65,7 +65,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     addServerHandler({
-      route: '',
+      route: '/api/session2',
       handler: handlerPathAuthSession,
     })
   },

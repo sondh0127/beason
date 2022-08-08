@@ -4,6 +4,8 @@
 
 <template>
   <div>
-    Login page
+    <button class="btn" @click="() => signIn()">
+      Login
+    </button>
   </div>
 </template>
