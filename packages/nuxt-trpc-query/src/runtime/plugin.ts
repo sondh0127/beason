@@ -75,16 +75,22 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   // // nuxt auth
   // nuxtApp.provide('session', sessionValue)
 
-  addRouteMiddleware('global-auth', async (from, to) => {
-    // // const _session = await $fetch('/api/session')
-    const _session = await getSession()
-    if (_session) {
-      if (from.path === '/login')
-        return navigateTo('/')
+  addRouteMiddleware('global-auth', async (to, from) => {
+    if (process.server) {
+      const nuxt = useNuxtApp()
+      sessionValue.value = await getSession({ req: nuxt.ssrContext?.event.req })
     }
-    else {
-      if (from.path !== '/login')
-        return navigateTo('/hello')
+
+    if (process.client) {
+      const _session = sessionValue.value
+      if (_session) {
+        if (from.path === '/login')
+          navigateTo('/')
+      }
+      else {
+        if (from.path !== '/login')
+          navigateTo('/login')
+      }
     }
   }, { global: true })
 })

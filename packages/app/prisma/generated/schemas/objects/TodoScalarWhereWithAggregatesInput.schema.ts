@@ -1,9 +1,10 @@
-import { z } from 'zod'
-import type { Prisma } from '@prisma/client'
-import { IntWithAggregatesFilterObjectSchema } from './IntWithAggregatesFilter.schema'
-import { StringWithAggregatesFilterObjectSchema } from './StringWithAggregatesFilter.schema'
-import { BoolWithAggregatesFilterObjectSchema } from './BoolWithAggregatesFilter.schema'
-import { DateTimeWithAggregatesFilterObjectSchema } from './DateTimeWithAggregatesFilter.schema'
+import { z } from 'zod';
+import { IntWithAggregatesFilterObjectSchema } from './IntWithAggregatesFilter.schema';
+import { StringWithAggregatesFilterObjectSchema } from './StringWithAggregatesFilter.schema';
+import { BoolWithAggregatesFilterObjectSchema } from './BoolWithAggregatesFilter.schema';
+import { DateTimeWithAggregatesFilterObjectSchema } from './DateTimeWithAggregatesFilter.schema';
+
+import type { Prisma } from '@prisma/client';
 
 const Schema: z.ZodType<Prisma.TodoScalarWhereWithAggregatesInput> = z
   .object({
@@ -35,7 +36,10 @@ const Schema: z.ZodType<Prisma.TodoScalarWhereWithAggregatesInput> = z
     createdAt: z
       .union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.date()])
       .optional(),
+    giang: z
+      .union([z.lazy(() => BoolWithAggregatesFilterObjectSchema), z.boolean()])
+      .optional(),
   })
-  .strict()
+  .strict();
 
-export const TodoScalarWhereWithAggregatesInputObjectSchema = Schema
+export const TodoScalarWhereWithAggregatesInputObjectSchema = Schema;

@@ -1,9 +1,10 @@
-import { z } from 'zod'
-import type { Prisma } from '@prisma/client'
-import { IntFilterObjectSchema } from './IntFilter.schema'
-import { StringFilterObjectSchema } from './StringFilter.schema'
-import { BoolFilterObjectSchema } from './BoolFilter.schema'
-import { DateTimeFilterObjectSchema } from './DateTimeFilter.schema'
+import { z } from 'zod';
+import { IntFilterObjectSchema } from './IntFilter.schema';
+import { StringFilterObjectSchema } from './StringFilter.schema';
+import { BoolFilterObjectSchema } from './BoolFilter.schema';
+import { DateTimeFilterObjectSchema } from './DateTimeFilter.schema';
+
+import type { Prisma } from '@prisma/client';
 
 const Schema: z.ZodType<Prisma.TodoWhereInput> = z
   .object({
@@ -33,7 +34,10 @@ const Schema: z.ZodType<Prisma.TodoWhereInput> = z
     createdAt: z
       .union([z.lazy(() => DateTimeFilterObjectSchema), z.date()])
       .optional(),
+    giang: z
+      .union([z.lazy(() => BoolFilterObjectSchema), z.boolean()])
+      .optional(),
   })
-  .strict()
+  .strict();
 
-export const TodoWhereInputObjectSchema = Schema
+export const TodoWhereInputObjectSchema = Schema;

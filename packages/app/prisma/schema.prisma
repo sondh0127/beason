@@ -15,8 +15,16 @@ datasource db {
 }
 
 model Todo {
-  id        Int   @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   title     String
   completed Boolean  @default(false)
   createdAt DateTime @default(now())
+  giang     Boolean  @default(false)
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  description String
+  name        String
+  createdAt   DateTime @default(now())
 }

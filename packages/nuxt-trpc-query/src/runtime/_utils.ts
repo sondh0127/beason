@@ -49,6 +49,7 @@ export async function fetchData<T = any>(
     const options = req?.headers.cookie
       ? { headers: { cookie: req.headers.cookie } }
       : {}
+
     const res = await fetch(url, options)
     const data = await res.json()
     if (!res.ok)

@@ -1,6 +1,6 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
-import type { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client';
 
 const Schema: z.ZodType<Prisma.NestedIntFilter> = z
   .object({
@@ -15,6 +15,6 @@ const Schema: z.ZodType<Prisma.NestedIntFilter> = z
       .union([z.number(), z.lazy(() => NestedIntFilterObjectSchema)])
       .optional(),
   })
-  .strict()
+  .strict();
 
-export const NestedIntFilterObjectSchema = Schema
+export const NestedIntFilterObjectSchema = Schema;

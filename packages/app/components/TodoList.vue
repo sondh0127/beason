@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import type { Todo } from '@prisma/client'
 
-const { data: todos, isLoading, error, refetch } = useQuery(
-  ['todo.findManyTodo', { take: 100 }],
-  { ssr: true },
-)
+const { data: todos, isLoading, error, refetch } = useQuery(['todo.findManyTodo', { take: 100 }], {})
+const { data: projects } = useQuery(['project.findAllProject', { take: 100 }], {})
 
 const client = useQueryClient()
 let editTodo = $ref<Todo | null>(null)
@@ -64,6 +62,7 @@ async function changeTitle() {
 </script>
 
 <template>
+  <pre>{{ JSON.stringify(projects, null, 2) }}</pre>
   <div v-if="isLoading">
     Loading...
   </div>
@@ -83,6 +82,7 @@ async function changeTitle() {
         <template v-else>
           <div class="" :class="{ 'line-through': t.completed }" @click="editTodo = t">
             Title: {{ t.title }}
+            Giang: {{ t.giang }}
           </div>
           <button @click="removeTodo(t.id)">
             <div class="i-carbon:close" />

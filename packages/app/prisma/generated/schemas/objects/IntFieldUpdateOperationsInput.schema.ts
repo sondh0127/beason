@@ -1,6 +1,6 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
-import type { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client';
 
 const Schema: z.ZodType<Prisma.IntFieldUpdateOperationsInput> = z
   .object({
@@ -10,6 +10,6 @@ const Schema: z.ZodType<Prisma.IntFieldUpdateOperationsInput> = z
     multiply: z.number().optional(),
     divide: z.number().optional(),
   })
-  .strict()
+  .strict();
 
-export const IntFieldUpdateOperationsInputObjectSchema = Schema
+export const IntFieldUpdateOperationsInputObjectSchema = Schema;
