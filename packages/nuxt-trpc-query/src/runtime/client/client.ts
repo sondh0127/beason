@@ -33,8 +33,7 @@ type inferInfiniteQueryNames<
   }[keyof TObj]
 
 export function useClient(): TRPCClient<TRouter> {
-  const { $client } = useNuxtApp()
-  return $client
+  return useNuxtApp().$trpcClient
 }
 
 type TQueries = TRouter['_def']['queries']
@@ -55,11 +54,10 @@ export function useQuery<
   trpcOptions?: TRPCRequestOptions,
 ) {
   const [path, input] = pathAndInput
-  const { $client } = useNuxtApp()
 
   const query = __useQuery(
     [path, input],
-    () => $client.query(...pathAndInput, trpcOptions),
+    () => useNuxtApp().$trpcClient.query(...pathAndInput, trpcOptions),
     opts,
   )
   if (opts?.ssr) {
@@ -79,12 +77,10 @@ export function useMutation<
   opts?: Omit<UseMutationOptions<TMutationValues[TPath]['output'], TError, [...inferHandlerInput<TMutations[TPath]>], TContext>, 'mutationFn'>,
   trpcOptions?: TRPCRequestOptions,
 ) {
-  const { $client } = useNuxtApp()
-
   return __useMutation((input) => {
     // const actualPath = Array.isArray(path) ? path[0] : path
     const pathAndInput = [path, ...input] as const
-    return $client.mutation(...pathAndInput, trpcOptions)
+    return useNuxtApp().$trpcClient.mutation(...pathAndInput, trpcOptions)
   }, opts)
 }
 
@@ -99,13 +95,12 @@ export function useInfiniteQuery<
   trpcOptions?: TRPCRequestOptions,
 ) {
   const [path, input] = pathAndInput
-  const { $client } = useNuxtApp()
 
   const query = __useInfiniteQuery(
     pathAndInput,
     ({ pageParam }) => {
       const actualInput = { ...(input ?? {}), cursor: pageParam }
-      return $client.query(path, actualInput, trpcOptions)
+      return useNuxtApp().$trpcClient.query(path, actualInput, trpcOptions)
     },
     opts,
   )

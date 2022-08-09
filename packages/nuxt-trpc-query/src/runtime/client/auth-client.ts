@@ -1,10 +1,10 @@
 import type { LoggerInstance, Session } from 'next-auth'
 import type { BuiltInProviderType, RedirectableProviderType } from 'next-auth/providers'
 // import { proxyLogger } from 'next-auth/utils/logger'
-import parseUrl from './parse-url'
-import type { ClientSafeProvider, LiteralUnion, SessionProviderProps, SignInAuthorizationParams, SignInOptions, SignInResponse, SignOutParams, SignOutResponse, UseSessionOptions } from './types'
-import type { CtxOrReq, NextAuthClientConfig } from './_utils'
-import { BroadcastChannel, apiBaseUrl, fetchData, now } from './_utils'
+import parseUrl from '../next-auth/parse-url'
+import type { ClientSafeProvider, LiteralUnion, SessionProviderProps, SignInAuthorizationParams, SignInOptions, SignInResponse, SignOutParams, SignOutResponse, UseSessionOptions } from '../next-auth/types'
+import type { CtxOrReq, NextAuthClientConfig } from '../next-auth/_utils'
+import { BroadcastChannel, apiBaseUrl, fetchData, now } from '../next-auth/_utils'
 
 // This behaviour mirrors the default behaviour for getting the site name that
 // happens server side in server/index.js
@@ -114,7 +114,6 @@ export async function signIn<
     }/${provider}`
 
   const _signInUrl = `${signInUrl}?${new URLSearchParams(authorizationParams)}`
-  console.log('[LOG] ~ file: auth-client.ts ~ line 117 ~ _signInUrl', _signInUrl)
 
   const res = await fetch(_signInUrl, {
     method: 'post',
@@ -164,7 +163,6 @@ export async function signIn<
 export function useSession<R extends boolean>(options?: UseSessionOptions<R>) {
   // // @ts-expect-error Satisfy TS if branch on line below
   const { $session } = useNuxtApp()
-  console.log('[LOG] ~ file: auth-client.ts ~ line 167 ~ $session', $session)
   // if (!value && process.env.NODE_ENV !== 'production') {
   //   throw new Error(
   //     '[next-auth]: `useSession` must be wrapped in a <SessionProvider />',
@@ -239,7 +237,6 @@ export function createSessionProvider(props: SessionProviderProps = {}) {
 
   watchEffect(() => {
     __NEXTAUTH._getSession = async ({ event } = {}) => {
-      console.log('[LOG] ~ file: auth-client.ts ~ line 242 ~ event', event)
       try {
         const storageEvent = event === 'storage'
         // We should always update if we don't have a client session yet

@@ -10,8 +10,8 @@ import type { NextAuthOptions, Session } from 'next-auth'
 import GithubProvider from 'next-auth/providers/github'
 import type { CompatibilityEvent } from 'h3'
 import { NextAuthHandler } from 'next-auth/core'
-import type { SessionContextValue } from './session-context'
-import { createSessionProvider, getSession } from './auth-client'
+import type { SessionContextValue } from './next-auth/session-context'
+import { createSessionProvider, getSession } from './client/auth-client'
 import { defineNuxtPlugin } from '#app'
 import type { router } from '~/server/trpc'
 
@@ -19,7 +19,7 @@ declare type AppRouter = typeof router
 
 declare module '#app' {
   interface NuxtApp {
-    $client: trpc.TRPCClient<AppRouter>
+    $trpcClient: trpc.TRPCClient<AppRouter>
     $session: SessionContextValue | undefined
   }
 }
@@ -28,7 +28,8 @@ declare module '#app' {
 export default defineNuxtPlugin(async (nuxtApp) => {
   const config = useRuntimeConfig().public.trpcQuery
 
-  const client = trpc.createTRPCClient<AppRouter>({
+  // TRPC client
+  const trpcClient = trpc.createTRPCClient<AppRouter>({
     url: `${config.baseURL}${config.endpoint}`,
     headers: () => {
       if (nuxtApp.ssrContext) {
@@ -41,8 +42,9 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     },
   })
 
-  nuxtApp.provide('client', client)
+  nuxtApp.provide('trpcClient', trpcClient)
 
+  // Vue Query client
   const queryClient = new QueryClient({
     defaultOptions: { queries: { staleTime: 1000 } },
   })
@@ -62,34 +64,33 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       hydrate(queryClient, vueQueryClient.value)
     })
   }
+
+  // NextAuth Session Provider
+
   const sessionValue = useState<Session | null>('auth-session')
-
-  if (process.server) {
-    nuxtApp.hooks.hook('app:redirected', () => {
-
-    })
-  }
 
   // const sessionValue = createSessionProvider()
 
   // // nuxt auth
   // nuxtApp.provide('session', sessionValue)
 
-  addRouteMiddleware('global-auth', async (to, from) => {
+  addRouteMiddleware('next-auth', async (to, from) => {
     if (process.server) {
       const nuxt = useNuxtApp()
       sessionValue.value = await getSession({ req: nuxt.ssrContext?.event.req })
     }
 
     if (process.client) {
-      const _session = sessionValue.value
-      if (_session) {
-        if (from.path === '/login')
-          navigateTo('/')
+      const session = sessionValue.value
+      if (session) {
+        if (to.path === '/login') {
+          // todo get redirect url from session or from query string
+          return navigateTo('/')
+        }
       }
       else {
-        if (from.path !== '/login')
-          navigateTo('/login')
+        if (to.path !== '/login')
+          return navigateTo('/login')
       }
     }
   }, { global: true })

@@ -1,5 +1,6 @@
 import { defineNuxtConfig } from 'nuxt'
 import Inspector from 'vite-plugin-vue-inspector'
+import NuxtTrpcQuery from '../nuxt-trpc-query'
 
 export default defineNuxtConfig({
   modules: [
@@ -7,7 +8,7 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     '@pinia/nuxt',
     '@nuxtjs/color-mode',
-    'nuxt-trpc-query',
+    NuxtTrpcQuery,
   ],
   experimental: {
     reactivityTransform: true,
