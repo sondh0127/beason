@@ -10,9 +10,9 @@ import { TodoUpdateManySchema } from '@/prisma/generated/schemas/updateManyTodo.
 import { TodoUpsertSchema } from '@/prisma/generated/schemas/upsertOneTodo.schema'
 import { TodoAggregateSchema } from '@/prisma/generated/schemas/aggregateTodo.schema'
 import { TodoGroupBySchema } from '@/prisma/generated/schemas/groupByTodo.schema'
-import { ProjectFindManySchema } from '~~/prisma/generated/schemas/findManyProject.schema'
+import { ProjectFindManySchema } from '@/prisma/generated/schemas/findManyProject.schema'
 
-export const todosRouter = createRouter()
+export const projectRouter = createRouter()
 
 // .query('aggregateTodo', {
 //   input: TodoAggregateSchema,
