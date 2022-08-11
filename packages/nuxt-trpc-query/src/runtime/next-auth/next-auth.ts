@@ -1,5 +1,6 @@
 import {
   appendHeader,
+  defineEventHandler,
   sendRedirect,
   setCookie,
   useBody,
@@ -11,6 +12,7 @@ import type { RequestInternal } from 'next-auth/core'
 import { NextAuthHandler } from 'next-auth/core'
 import { createURL } from 'ufo'
 import GithubProvider from 'next-auth/providers/github'
+import LineProvider from 'next-auth/providers/line'
 
 const options: NextAuthOptions = {
   providers: [
@@ -20,11 +22,15 @@ const options: NextAuthOptions = {
       clientId: '381722ffda6d5d24f6b5',
       clientSecret: 'f299271f4191972ee2f15dbef06071f5e4fb7da4',
     }),
+    LineProvider.default({
+      clientId: '1657378767',
+      clientSecret: '758311efbf38235a720642a15d9970e6',
+    }),
   ],
 }
 
 const IMPORT_META_ENV = {
-  VITE_NEXTAUTH_URL: 'http://localhost:3000',
+  VITE_NEXTAUTH_URL: 'http://next-auth.local',
   VITE_NEXTAUTH_SECRET: '4260a8a648e9cd8503485d46f93d1bd6',
 }
 
@@ -35,7 +41,8 @@ export default defineEventHandler(async (event) => {
   // console.log('[LOG] ~ file: next-auth.ts ~ line 31 ~ req', req.url)
 
   const $url = createURL(req.url!)
-  // // const config = useRuntimeConfig().public.trpcQuery
+  const config = useRuntimeConfig().public.trpcQuery
+
   // // const { NEXTAUTH_URL } = config
 
   // const app = createApp()

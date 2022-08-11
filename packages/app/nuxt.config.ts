@@ -1,5 +1,6 @@
 import { defineNuxtConfig } from 'nuxt'
 import Inspector from 'vite-plugin-vue-inspector'
+import GithubProvider from 'next-auth/providers/github'
 import NuxtTrpcQuery from '../nuxt-trpc-query'
 
 export default defineNuxtConfig({

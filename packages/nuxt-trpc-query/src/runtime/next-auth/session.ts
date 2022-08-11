@@ -1,6 +1,7 @@
 import {
   appendHeader,
   createApp,
+  defineEventHandler,
   sendRedirect,
   setCookie,
   useBody,

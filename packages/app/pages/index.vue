@@ -62,6 +62,7 @@ const session = useSession()
   <button class="btn" @click="() => signIn()">
     Login
   </button>
+
   <button class="btn" @click="() => signOut()">
     Logout
   </button>

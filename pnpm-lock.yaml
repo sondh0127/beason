@@ -69,6 +69,7 @@ importers:
       '@nuxtjs/eslint-config-typescript': latest
       '@trpc/client': ^9.26.0
       '@trpc/server': ^9.26.0
+      '@types/dedent': ^0.7.0
       cookie: ^0.5.0
       dedent: ^0.7.0
       defu: ^6.0.0
@@ -94,6 +95,7 @@ importers:
     devDependencies:
       '@nuxt/module-builder': 0.1.7
       '@nuxtjs/eslint-config-typescript': 10.0.0_eslint@8.21.0
+      '@types/dedent': 0.7.0
       eslint: 8.21.0
       nuxt: 3.0.0-rc.6
 
@@ -1320,6 +1322,10 @@ packages:
     resolution: {integrity: sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==}
     dependencies:
       '@types/ms': 0.7.31
+    dev: true
+
+  /@types/dedent/0.7.0:
+    resolution: {integrity: sha512-EGlKlgMhnLt/cM4DbUSafFdrkeJoC9Mvnj0PUCU7tFmTjMjNRT957kXCx0wYm3JuEq4o4ZsS5vG+NlkM2DMd2A==}
     dev: true
 
   /@types/estree/0.0.39:

@@ -10,6 +10,7 @@ import type {
 } from '@trpc/server'
 import type { TRPCResponse } from '@trpc/server/dist/declarations/src/rpc'
 import type { CompatibilityEvent } from 'h3'
+import { defineEventHandler } from 'h3'
 import { createContext, router } from '~/server/trpc'
 
 interface Router extends AnyRouter {}
