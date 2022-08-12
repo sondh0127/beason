@@ -1,17 +1,12 @@
 import { fileURLToPath } from 'url'
-import { addAutoImportDir, addPlugin, addServerHandler, addTemplate, defineNuxtModule } from '@nuxt/kit'
+import { addAutoImportDir, addPlugin, addServerHandler, addTemplate, defineNuxtModule, resolveFiles } from '@nuxt/kit'
 import { join } from 'pathe'
 import { defu } from 'defu'
-import type { NextAuthOptions } from 'next-auth'
-import GithubProvider from 'next-auth/providers/github'
-import LineProvider from 'next-auth/providers/line'
 import dedent from 'dedent'
-import { createNextAuthHandler } from './runtime/next-auth/next-auth'
 
 export interface ModuleOptions {
   baseURL: string
   endpoint: string
-  nextAuthOptions: NextAuthOptions
 }
 
 const rPath = (p: string) => fileURLToPath(new URL(p, import.meta.url).toString())
@@ -27,22 +22,6 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     baseURL: 'http://localhost:3000',
     endpoint: '/trpc',
-    nextAuthOptions: {
-      providers: [
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        GithubProvider.default({
-          // clientId: import.meta.env.VITE_GITHUB_CLIENT_ID,
-          // clientSecret: import.meta.env.VITE_GITHUB_CLIENT_SECRET,
-          clientId: '381722ffda6d5d24f6b5',
-          clientSecret: 'f299271f4191972ee2f15dbef06071f5e4fb7da4',
-        }),
-        LineProvider.default({
-          clientId: '1657378767',
-          clientSecret: '758311efbf38235a720642a15d9970e6',
-        }),
-      ],
-    },
   },
   setup(options, nuxt) {
     // Final resolved configuration
@@ -51,36 +30,60 @@ export default defineNuxtModule<ModuleOptions>({
     = defu(nuxt.options.runtimeConfig.public.trpcQuery, {
         baseURL: options.baseURL,
         endpoint: options.endpoint,
+        nextAuthOptions: options.nextAuthOptions,
       })
+
+    nuxt.options.runtimeConfig.public.nextAuth = options.nextAuthOptions
 
     // Register runtime folder
     const runtimeDir = rPath('./runtime')
     nuxt.options.build.transpile.push(runtimeDir)
 
     // TRPC Server
-    // const handlerPath = join(nuxt.options.buildDir, 'trpc-handler.ts')
+    const handlerPath = join(nuxt.options.buildDir, 'trpc-handler.ts')
+    const trpcOptionsPath = join(nuxt.options.srcDir, 'server/trpc')
+
+    addTemplate({
+      filename: 'trpc-handler.ts',
+      write: true,
+      getContents() {
+        return dedent`
+          import { createTRPCHandler } from 'nuxt-trpc-query/trpc'
+          import * as functions from '${trpcOptionsPath}'
+
+          export default createTRPCHandler({
+            ...functions,
+            endpoint: '${finalConfig.endpoint}'
+          })
+        `
+      },
+    })
+
     addServerHandler({
       route: `${finalConfig.endpoint}/*`,
-      handler: join(runtimeDir, 'trpc-handler'),
+      handler: handlerPath,
     })
 
     // Nuxt Auth module
-    // addTemplate({
-    //   filename: 'next-auth.ts',
-    //   write: true,
-    //   getContents() {
-    //     return dedent`
-    //       import handler from 'nuxt-trpc-query/next-auth'
-
-    //       export default handler
-    //     `
-    //   },
-    //   options: options.nextAuthOptions,
-    // })
+    const authHandlerPath = join(nuxt.options.buildDir, 'next-auth-handler.ts')
+    const nextAuthOptionsPath = join(nuxt.options.srcDir, 'server/next-auth')
 
     addServerHandler({
       route: '/api/auth/**',
-      handler: join(runtimeDir, 'next-auth/next-auth'),
+      handler: authHandlerPath,
+    })
+
+    addTemplate({
+      filename: 'next-auth-handler.ts',
+      write: true,
+      getContents() {
+        return dedent`
+          import { createNextAuthHandler } from 'nuxt-trpc-query/next-auth'
+          import options from '${nextAuthOptionsPath}'
+
+          export default createNextAuthHandler(options)
+        `
+      },
     })
 
     addServerHandler({

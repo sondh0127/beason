@@ -10,8 +10,11 @@ import type {
 } from '@trpc/server'
 import type { TRPCResponse } from '@trpc/server/dist/declarations/src/rpc'
 import type { CompatibilityEvent } from 'h3'
-import { defineEventHandler } from 'h3'
-import { createContext, router } from '~/server/trpc'
+import { defineEventHandler, isMethod } from 'h3'
+
+type MaybePromise<T> = T | Promise<T>
+
+export type CreateContextFn<TRouter extends AnyRouter> = (event: CompatibilityEvent) => MaybePromise<inferRouterContext<TRouter>>
 
 interface Router extends AnyRouter {}
 export interface ResponseMetaFnPayload<TRouter extends AnyRouter> {
@@ -37,42 +40,52 @@ export interface OnErrorPayload<TRouter extends AnyRouter> {
 // @trpc/server/dist/declarations/src/internals/onErrorFunction.d.ts
 export type OnErrorFn<TRouter extends AnyRouter> = (opts: OnErrorPayload<TRouter>) => void
 
-export default defineEventHandler(async (event) => {
-  const { req, res } = event
+export function createTRPCHandler<Router extends AnyRouter>({
+  router,
+  createContext,
+  responseMeta,
+  onError,
+  endpoint,
+}: {
+  router: Router
+  createContext?: CreateContextFn<Router>
+  responseMeta?: ResponseMetaFn<Router>
+  onError?: OnErrorFn<Router>
+  endpoint: string
+}) {
+  return defineEventHandler(async (event) => {
+    const { req, res } = event
 
-  const $url = createURL(req.url!)
-  const config = useRuntimeConfig().public.trpcQuery
-  const { endpoint } = config
+    const $url = createURL(req.url!)
 
-  // not found the usage yet
-  const responseMeta: ResponseMetaFn<Router> | undefined = undefined
-  const onError: OnErrorFn<Router> | undefined = undefined
+    // not found the usage yet
 
-  const httpResponse = await resolveHTTPResponse({
-    router,
-    req: {
-      method: req.method!,
-      headers: req.headers,
-      body: isMethod(event, 'GET') ? null : await useBody(event),
-      query: $url.searchParams,
-    },
-    path: $url.pathname.substring(endpoint.length + 1),
-    createContext: async () => createContext?.(event),
-    responseMeta,
-    onError: (o) => {
-      onError?.({
-        ...o,
-        req,
-      })
-    },
+    const httpResponse = await resolveHTTPResponse({
+      router,
+      req: {
+        method: req.method!,
+        headers: req.headers,
+        body: isMethod(event, 'GET') ? null : await useBody(event),
+        query: $url.searchParams,
+      },
+      path: $url.pathname.substring(endpoint.length + 1),
+      createContext: async () => createContext?.(event),
+      responseMeta,
+      onError: (o) => {
+        onError?.({
+          ...o,
+          req,
+        })
+      },
+    })
+
+    const { status, headers, body } = httpResponse
+    res.statusCode = status
+
+    headers && Object.keys(headers).forEach((key) => {
+      res.setHeader(key, headers[key])
+    })
+
+    return body
   })
-
-  const { status, headers, body } = httpResponse
-  res.statusCode = status
-
-  headers && Object.keys(headers).forEach((key) => {
-    res.setHeader(key, headers[key])
-  })
-
-  return body
-})
+}

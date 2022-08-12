@@ -8,9 +8,13 @@
       "require": "./dist/module.cjs",
       "import": "./dist/module.mjs"
     },
+    "./trpc": {
+      "types": "./dist/runtime/trpc-handler.d.ts",
+      "import": "./dist/runtime/trpc-handler.mjs"
+    },
     "./next-auth": {
-      "types": "./dist/next-auth/next-auth.d.ts",
-      "import": "./dist/next-auth/next-auth.mjs"
+      "types": "./dist/runtime/next-auth/next-auth.d.ts",
+      "import": "./dist/runtime/next-auth/next-auth.mjs"
     }
   },
   "main": "./dist/module.cjs",
