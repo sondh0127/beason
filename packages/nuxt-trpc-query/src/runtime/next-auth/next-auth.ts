@@ -37,7 +37,8 @@ export function createNextAuthHandler(options: NextAuthOptions) {
 
     const nextauth = $url.pathname.substring(endpoint.length).split('/')
     // // options.secret = import.meta.env.VITE_NEXTAUTH_SECRET
-    // options.secret = '4260a8a648e9cd8503485d46f93d1bd6'
+    options.secret
+      = options.secret ?? options.jwt?.secret ?? process.env.NEXTAUTH_SECRET
 
     const nextRequest: RequestInternal = {
       // host: import.meta.env.VITE_NEXTAUTH_URL,

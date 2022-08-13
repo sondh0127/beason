@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'url'
 import { addAutoImportDir, addPlugin, addServerHandler, addTemplate, defineNuxtModule, resolveFiles } from '@nuxt/kit'
-import { join } from 'pathe'
+import { join, resolve } from 'pathe'
 import { defu } from 'defu'
 import dedent from 'dedent'
 
@@ -30,10 +30,7 @@ export default defineNuxtModule<ModuleOptions>({
     = defu(nuxt.options.runtimeConfig.public.trpcQuery, {
         baseURL: options.baseURL,
         endpoint: options.endpoint,
-        nextAuthOptions: options.nextAuthOptions,
       })
-
-    nuxt.options.runtimeConfig.public.nextAuth = options.nextAuthOptions
 
     // Register runtime folder
     const runtimeDir = rPath('./runtime')
@@ -47,8 +44,11 @@ export default defineNuxtModule<ModuleOptions>({
       filename: 'trpc-handler.ts',
       write: true,
       getContents() {
+        const devPath = join(nuxt.options.rootDir, 'dist/runtime/trpc-handler.ts')
+        const isDev = true
+        const path = isDev ? devPath : 'nuxt-trpc-query/trpc'
         return dedent`
-          import { createTRPCHandler } from 'nuxt-trpc-query/trpc'
+          import { createTRPCHandler } from '${path}'
           import * as functions from '${trpcOptionsPath}'
 
           export default createTRPCHandler({
@@ -66,7 +66,8 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Nuxt Auth module
     const authHandlerPath = join(nuxt.options.buildDir, 'next-auth-handler.ts')
-    const nextAuthOptionsPath = join(nuxt.options.srcDir, 'server/next-auth')
+    // TODO add Warning Error message
+    const nextAuthOptionsPath = resolve(nuxt.options.srcDir, 'server/next-auth')
 
     addServerHandler({
       route: '/api/auth/**',
@@ -77,8 +78,11 @@ export default defineNuxtModule<ModuleOptions>({
       filename: 'next-auth-handler.ts',
       write: true,
       getContents() {
+        const devPath = join(nuxt.options.rootDir, 'dist/runtime/next-auth/next-auth.ts')
+        const isDev = true
+        const path = isDev ? devPath : 'nuxt-trpc-query/next-auth'
         return dedent`
-          import { createNextAuthHandler } from 'nuxt-trpc-query/next-auth'
+          import { createNextAuthHandler } from '${path}'
           import options from '${nextAuthOptionsPath}'
 
           export default createNextAuthHandler(options)

@@ -1,9 +1,8 @@
-import { z } from 'zod';
-import { IntWithAggregatesFilterObjectSchema } from './IntWithAggregatesFilter.schema';
-import { StringWithAggregatesFilterObjectSchema } from './StringWithAggregatesFilter.schema';
-import { DateTimeWithAggregatesFilterObjectSchema } from './DateTimeWithAggregatesFilter.schema';
-
-import type { Prisma } from '@prisma/client';
+import { z } from 'zod'
+import type { Prisma } from '@prisma/client'
+import { IntWithAggregatesFilterObjectSchema } from './IntWithAggregatesFilter.schema'
+import { StringWithAggregatesFilterObjectSchema } from './StringWithAggregatesFilter.schema'
+import { DateTimeWithAggregatesFilterObjectSchema } from './DateTimeWithAggregatesFilter.schema'
 
 const Schema: z.ZodType<Prisma.ProjectScalarWhereWithAggregatesInput> = z
   .object({
@@ -36,6 +35,6 @@ const Schema: z.ZodType<Prisma.ProjectScalarWhereWithAggregatesInput> = z
       .union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.date()])
       .optional(),
   })
-  .strict();
+  .strict()
 
-export const ProjectScalarWhereWithAggregatesInputObjectSchema = Schema;
+export const ProjectScalarWhereWithAggregatesInputObjectSchema = Schema

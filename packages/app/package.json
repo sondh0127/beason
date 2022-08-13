@@ -22,7 +22,7 @@
     "@unocss/nuxt": "^0.44.5",
     "@vueuse/nuxt": "^8.9.4",
     "eslint": "^8.20.0",
-    "nuxt": "^3.0.0-rc.6",
+    "nuxt": "^3.0.0-rc.8",
     "pinia": "^2.0.16",
     "prisma": "^4.1.0",
     "prisma-zod-generator": "^0.4.1",

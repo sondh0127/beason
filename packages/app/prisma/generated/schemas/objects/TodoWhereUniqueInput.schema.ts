@@ -1,11 +1,11 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client'
 
 const Schema: z.ZodType<Prisma.TodoWhereUniqueInput> = z
   .object({
     id: z.number().optional(),
   })
-  .strict();
+  .strict()
 
-export const TodoWhereUniqueInputObjectSchema = Schema;
+export const TodoWhereUniqueInputObjectSchema = Schema

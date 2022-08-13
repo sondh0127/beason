@@ -1,7 +1,7 @@
-import { z } from 'zod';
-import { ProjectWhereInputObjectSchema } from './objects/ProjectWhereInput.schema';
-import { ProjectOrderByWithRelationInputObjectSchema } from './objects/ProjectOrderByWithRelationInput.schema';
-import { ProjectWhereUniqueInputObjectSchema } from './objects/ProjectWhereUniqueInput.schema';
+import { z } from 'zod'
+import { ProjectWhereInputObjectSchema } from './objects/ProjectWhereInput.schema'
+import { ProjectOrderByWithRelationInputObjectSchema } from './objects/ProjectOrderByWithRelationInput.schema'
+import { ProjectWhereUniqueInputObjectSchema } from './objects/ProjectWhereUniqueInput.schema'
 
 export const ProjectAggregateSchema = z.object({
   where: ProjectWhereInputObjectSchema.optional(),
@@ -9,4 +9,4 @@ export const ProjectAggregateSchema = z.object({
   cursor: ProjectWhereUniqueInputObjectSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-});
+})

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const TodoScalarFieldEnumSchema = z.enum([
   'id',
@@ -6,4 +6,4 @@ export const TodoScalarFieldEnumSchema = z.enum([
   'completed',
   'createdAt',
   'giang',
-]);
+])

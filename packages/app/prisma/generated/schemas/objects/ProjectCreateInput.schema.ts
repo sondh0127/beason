@@ -1,6 +1,6 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client'
 
 const Schema: z.ZodType<Prisma.ProjectCreateInput> = z
   .object({
@@ -8,6 +8,6 @@ const Schema: z.ZodType<Prisma.ProjectCreateInput> = z
     name: z.string(),
     createdAt: z.date().optional(),
   })
-  .strict();
+  .strict()
 
-export const ProjectCreateInputObjectSchema = Schema;
+export const ProjectCreateInputObjectSchema = Schema

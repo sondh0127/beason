@@ -1,8 +1,7 @@
-import { z } from 'zod';
-import { StringFieldUpdateOperationsInputObjectSchema } from './StringFieldUpdateOperationsInput.schema';
-import { DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema';
-
-import type { Prisma } from '@prisma/client';
+import { z } from 'zod'
+import type { Prisma } from '@prisma/client'
+import { StringFieldUpdateOperationsInputObjectSchema } from './StringFieldUpdateOperationsInput.schema'
+import { DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema'
 
 const Schema: z.ZodType<Prisma.ProjectUpdateInput> = z
   .object({
@@ -25,6 +24,6 @@ const Schema: z.ZodType<Prisma.ProjectUpdateInput> = z
       ])
       .optional(),
   })
-  .strict();
+  .strict()
 
-export const ProjectUpdateInputObjectSchema = Schema;
+export const ProjectUpdateInputObjectSchema = Schema

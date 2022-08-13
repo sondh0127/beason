@@ -1,9 +1,8 @@
-import { z } from 'zod';
-import { IntFilterObjectSchema } from './IntFilter.schema';
-import { StringFilterObjectSchema } from './StringFilter.schema';
-import { DateTimeFilterObjectSchema } from './DateTimeFilter.schema';
-
-import type { Prisma } from '@prisma/client';
+import { z } from 'zod'
+import type { Prisma } from '@prisma/client'
+import { IntFilterObjectSchema } from './IntFilter.schema'
+import { StringFilterObjectSchema } from './StringFilter.schema'
+import { DateTimeFilterObjectSchema } from './DateTimeFilter.schema'
 
 const Schema: z.ZodType<Prisma.ProjectWhereInput> = z
   .object({
@@ -34,6 +33,6 @@ const Schema: z.ZodType<Prisma.ProjectWhereInput> = z
       .union([z.lazy(() => DateTimeFilterObjectSchema), z.date()])
       .optional(),
   })
-  .strict();
+  .strict()
 
-export const ProjectWhereInputObjectSchema = Schema;
+export const ProjectWhereInputObjectSchema = Schema

@@ -1,8 +1,8 @@
-import { z } from 'zod';
-import { ProjectWhereInputObjectSchema } from './objects/ProjectWhereInput.schema';
-import { ProjectOrderByWithRelationInputObjectSchema } from './objects/ProjectOrderByWithRelationInput.schema';
-import { ProjectWhereUniqueInputObjectSchema } from './objects/ProjectWhereUniqueInput.schema';
-import { ProjectScalarFieldEnumSchema } from './enums/ProjectScalarFieldEnum.schema';
+import { z } from 'zod'
+import { ProjectWhereInputObjectSchema } from './objects/ProjectWhereInput.schema'
+import { ProjectOrderByWithRelationInputObjectSchema } from './objects/ProjectOrderByWithRelationInput.schema'
+import { ProjectWhereUniqueInputObjectSchema } from './objects/ProjectWhereUniqueInput.schema'
+import { ProjectScalarFieldEnumSchema } from './enums/ProjectScalarFieldEnum.schema'
 
 export const ProjectFindManySchema = z.object({
   where: ProjectWhereInputObjectSchema.optional(),
@@ -11,4 +11,4 @@ export const ProjectFindManySchema = z.object({
   take: z.number().optional(),
   skip: z.number().optional(),
   distinct: z.array(ProjectScalarFieldEnumSchema).optional(),
-});
+})
