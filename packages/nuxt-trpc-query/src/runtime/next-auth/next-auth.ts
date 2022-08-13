@@ -4,9 +4,6 @@ import {
   isMethod,
   sendRedirect,
   setCookie,
-  useBody,
-  useCookies,
-  useQuery,
 } from 'h3'
 import type { NextAuthAction, NextAuthOptions } from 'next-auth'
 import type { RequestInternal } from 'next-auth/core'
@@ -36,16 +33,16 @@ export function createNextAuthHandler(options: NextAuthOptions) {
     const endpoint = '/api/auth'
 
     const nextauth = $url.pathname.substring(endpoint.length).split('/')
-    // // options.secret = import.meta.env.VITE_NEXTAUTH_SECRET
     options.secret
-      = options.secret ?? options.jwt?.secret ?? process.env.NEXTAUTH_SECRET
+    = options.secret ?? options.jwt?.secret ?? import.meta.env.VITE_NEXTAUTH_SECRET
+    console.log('[LOG] ~ file: next-auth.ts ~ line 40 ~ options.secret', options.secret)
 
     const nextRequest: RequestInternal = {
       // host: import.meta.env.VITE_NEXTAUTH_URL,
       host: IMPORT_META_ENV.VITE_NEXTAUTH_URL,
       body,
-      cookies: useCookies(event),
-      query: useQuery(event),
+      cookies: parseCookies(event),
+      query: getQuery(event),
       headers: req.headers,
       method: req.method,
       action: nextauth[1] as NextAuthAction,

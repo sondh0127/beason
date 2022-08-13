@@ -36,6 +36,7 @@ const DATABASE_URL = 'sqlite://localhost/:memory:?synchronize=true'
 
 export default defineEventHandler(async (event) => {
   const { req, res } = event
+  options.secret = options.secret ?? options.jwt?.secret ?? import.meta.env.VITE_NEXTAUTH_SECRET
 
   const session = await NextAuthHandler<Session>({
     req: {
