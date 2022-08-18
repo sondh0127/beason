@@ -1,10 +1,6 @@
 import type { DehydratedState, VueQueryPluginOptions } from 'vue-query'
-import {
-  QueryClient,
-  VueQueryPlugin,
-  dehydrate,
-  hydrate,
-} from 'vue-query'
+import { QueryClient, VueQueryPlugin } from 'vue-query'
+import { dehydrate, hydrate } from '@tanstack/query-core'
 import * as trpc from '@trpc/client'
 import type { Session } from 'next-auth'
 import type { SessionContextValue } from './next-auth/session-context'

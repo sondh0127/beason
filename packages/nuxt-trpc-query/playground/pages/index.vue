@@ -4,6 +4,8 @@
 
 <template>
   <div>
-    Component
+    <button class="btn" @click="() => signOut()">
+      Logout
+    </button>
   </div>
 </template>

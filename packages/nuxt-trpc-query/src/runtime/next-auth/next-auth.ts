@@ -34,8 +34,7 @@ export function createNextAuthHandler(options: NextAuthOptions) {
 
     const nextauth = $url.pathname.substring(endpoint.length).split('/')
     options.secret
-    = options.secret ?? options.jwt?.secret ?? import.meta.env.VITE_NEXTAUTH_SECRET
-    console.log('[LOG] ~ file: next-auth.ts ~ line 40 ~ options.secret', options.secret)
+      = options.secret ?? options.jwt?.secret ?? import.meta.env.VITE_NEXTAUTH_SECRET
 
     const nextRequest: RequestInternal = {
       // host: import.meta.env.VITE_NEXTAUTH_URL,
