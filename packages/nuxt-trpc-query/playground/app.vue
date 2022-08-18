@@ -1,14 +1,29 @@
-<script setup lang="ts">
-const enabled = ref(true)
-const { data: data2, suspense: suspense2 } = useQuery(['getTodos'], { enabled, ssr: true })
+<script setup>
+useHead({
+  title: 'Beason',
+  link: [
+    {
+      rel: 'icon', type: 'image/png', href: '/nuxt.png',
+    },
+  ],
+})
 </script>
 
 <template>
-  <div>
-    Nuxt module playground!
-    <button @click="enabled = !enabled">
-      Enabled: {{ enabled }}
-    </button>
-    <pre>{{ JSON.stringify(data2, null, 2) }}</pre>
-  </div>
+  <NuxtLayout cl>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
+
+<style>
+html, body , #__nuxt{
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+html.dark {
+  background: #222;
+  color: white;
+}
+</style>

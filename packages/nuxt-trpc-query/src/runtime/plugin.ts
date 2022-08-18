@@ -6,12 +6,9 @@ import {
   hydrate,
 } from 'vue-query'
 import * as trpc from '@trpc/client'
-import type { NextAuthOptions, Session } from 'next-auth'
-import GithubProvider from 'next-auth/providers/github'
-import type { CompatibilityEvent } from 'h3'
-import { NextAuthHandler } from 'next-auth/core'
+import type { Session } from 'next-auth'
 import type { SessionContextValue } from './next-auth/session-context'
-import { createSessionProvider, getSession } from './client/auth-client'
+import { getSession } from './client/auth-client'
 import { defineNuxtPlugin } from '#app'
 import type { router } from '~/server/trpc'
 
